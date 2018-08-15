@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="http抓包分析," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。3.抓取portal认证信息">
+<meta name="keywords" content="http抓包分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http-sniffer 添加过滤并实现抓取portal认证信息">
+<meta property="og:url" content="http://yoursite.com/2018/08/14/http-sniffer-添加过滤并实现抓取portal认证信息/index.html">
+<meta property="og:site_name" content="bluedark&#39;s blog">
+<meta property="og:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。3.抓取portal认证信息">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckuf3aigr2qe6718dn1jtjn4da.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckrocst3snm27a2e3gdiemoa.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cksc0l5jo4943h11u6175o1bhia.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cksc37p01aim12mgfdv1j9315p8a.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckscm2f06euqsu1manfek1cq6a.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cktopssm13s21im0urt13ns1oc4a.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cku9f9lc14cf1n6sjn1ua715h7a.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cku9hjci1t61sv51vu7p4u1p8ta.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cku9lht68jhm211rqo1ef2rqba.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckualtqt11iv1e6k1h9i1fq1k0a.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckuaqlgifvn1ivsdmr1qnnsula.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckui13cnaci1stb1035gh1uv1a.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckui6ap710fa129fnbc121fn7oa.png-j.jpg">
+<meta property="og:updated_time" content="2018-08-15T14:31:42.363Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="http-sniffer 添加过滤并实现抓取portal认证信息">
+<meta name="twitter:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。3.抓取portal认证信息">
+<meta name="twitter:image" content="http://t1.aixinxi.net/o_1ckuf3aigr2qe6718dn1jtjn4da.png-j.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/14/http-sniffer-添加过滤并实现抓取portal认证信息/"/>
+
+
+
+
+
+  <title>http-sniffer 添加过滤并实现抓取portal认证信息 | bluedark's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6c624460d0fe90a1ddc2be0f57c7b0f7";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bluedark's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep running</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/14/http-sniffer-添加过滤并实现抓取portal认证信息/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="bluedark">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bluedark's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">http-sniffer 添加过滤并实现抓取portal认证信息</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T10:45:45+08:00">
+                2018-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>主要工作：</p>
+<ol>
+<li>对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。</li>
+<li>增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。<br>3.抓取portal认证信息<a id="more"></a>
+</li>
+</ol>
+<p>#介绍：#</p>
+<p><strong>http-sniffer：</strong><br>是一种多线程工具，可以用于从pcap文件中嗅探TCP流统计信息和嵌入式HTTP标头。每个携带HTTP的TCP流都以json格式导出到文本中。<br>链接：<a href="https://github.com/caesar0301/http-sniffer" target="_blank" rel="noopener">https://github.com/caesar0301/http-sniffer</a></p>
+<p>安装依赖软件包：  </p>
+<ul>
+<li>libpcap<br>libpcap软件链接：<a href="http://www.tcpdump.org/" target="_blank" rel="noopener">http://www.tcpdump.org/</a><br>安装教程链接<a href="https://cn.aliyun.com/jiaocheng/137533.html?spm=5176.100033.1.23.M6VMI3" target="_blank" rel="noopener">https://cn.aliyun.com/jiaocheng/137533.html?spm=5176.100033.1.23.M6VMI3</a>   </li>
+<li>json-c<br>json软件及安装链接：<a href="https://github.com/json-c/json-c" target="_blank" rel="noopener">https://github.com/json-c/json-c</a>  </li>
+<li>scons<br>scons软件链接：<a href="https://www.scons.org/" target="_blank" rel="noopener">https://www.scons.org/</a><br>scons安装链接：<a href="https://blog.csdn.net/djy37010/article/details/51312975" target="_blank" rel="noopener">https://blog.csdn.net/djy37010/article/details/51312975</a>  </li>
+</ul>
+<p><strong>portal认证：</strong><br>Portal认证的基本过程是：客户机首先通过DHCP协议获取到IP地址（也可以使用静态IP地址），但是客户使用获取到的IP地址并不能登上Internet，在认证通过前只能访问特定的IP地址，这个地址通常是PORTAL服务器的IP地址。采用Portal认证的接入设备必须具备这个能力。一般通过修改接入设备的访问控制表（ACL）可以做到。</p>
+<p>用户登录到Portal Server后，可以浏览上面的内容，比如广告、新闻等免费信息，同时用户还可以在网页上输入用户名和密码，它们会被WEB客户端应用程序传给 Portal Server，再由Portal Server与NAS之间交互来实现用户的认证。</p>
+<p>Portal Server在获得用户的用户名和密码外，还会得到用户的IP地址，以它为索引来标识用户。然后Portal Server 与NAS之间用Portal协议直接通信，而NAS又与RADIUS 服务器直接通信完成用户的认证和上线过程。因为安全问题，通常支持安全性较强的CHAP式认证。</p>
+<p>优点：</p>
+<ul>
+<li><p>不需要特殊的客户端软件，降低网络维护工作量</p>
+</li>
+<li><p>l可以提供Portal等业务认证</p>
+</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><p>WEB承载在7层协议上，对于设备的要求较高，建网成本高；</p>
+</li>
+<li><p>用户连接性差，不容易检测用户离线，基于时间的计费较难实现；</p>
+</li>
+<li><p>易用性不够好，用户在访问网络前，不管是 TELNET、FTP还是其它业务，必须使用浏览器进行WEB认证；</p>
+</li>
+<li><p>IP地址的分配在用户认证前，如果用户不是上网用户，则会造成地址的浪费，而且不便于多ISP的支持。</p>
+</li>
+<li><p>认证前后业务流和数据流无法区分</p>
+</li>
+</ul>
+<p><strong>portal无感知认证：</strong><br>  简单的来说就是可以避免每次连接网络都需要进行portal认证，避免每次输入用户名及密码带来的繁琐<br>  具体操作是将你当前设备的mac地址与你的portal认证用户名相绑定  </p>
+<p><strong>数据包中各帧格式</strong><br>  <img src="http://t1.aixinxi.net/o_1ckuf3aigr2qe6718dn1jtjn4da.png-j.jpg" alt=""><br>  具体详见<a href="https://blog.csdn.net/jeffery_gong/article/details/51271979" target="_blank" rel="noopener">https://blog.csdn.net/jeffery_gong/article/details/51271979</a></p>
+<h1 id="http-sniffer重要代码分析"><a href="#http-sniffer重要代码分析" class="headerlink" title="http-sniffer重要代码分析"></a>http-sniffer重要代码分析</h1><p>http-sniffer总体流程：  </p>
+<p>数据包抓取形成数据包队列—&gt;对数据包分析—&gt;保存到流队列—&gt;对流数据处理—&gt;生成日志并输出到json文件</p>
+<ul>
+<li><p>##数据包抓取<br>main.c函数中的capture_main（）函数  </p>
+<pre><code>int capture_main(const char* interface, void (*pkt_handler)(void*), int livemode,char *rules){
+char errbuf[PCAP_ERRBUF_SIZE];
+memset(errbuf, 0, PCAP_ERRBUF_SIZE);
+char *raw = NULL;
+pcap_t *cap = NULL;
+struct bpf_program filter;
+struct pcap_pkthdr pkthdr;
+packet_t *packet = NULL;
+bpf_u_int32 net;
+bpf_u_int32 mask;
+extern int GP_CAP_FIN;
+// printf(&quot;%s mode ...\n&quot;, livemode==1 ? &quot;Online&quot; : &quot;Offline&quot;);
+printf(&quot;%s\n&quot;,interface);
+printf(&quot;%s&quot;,rules);
+if ( livemode==1 ) {
+pcap_lookupnet(interface,&amp;net,&amp;mask,errbuf);
+    cap = pcap_open_live(interface, 65535, 0, 1000, errbuf);
+} else {
+    cap = pcap_open_offline(interface, errbuf);
+}
+if( cap == NULL) {
+    printf(&quot;%s\n&quot;,errbuf); exit(1);
+}
+while(1){
+pcap_compile(cap,&amp;filter,rules,0,net);
+pcap_setfilter(cap,&amp;filter);
+    raw = pcap_next(cap, &amp;pkthdr);
+    if( NULL != raw){
+        packet = packet_preprocess(raw, &amp;pkthdr);
+        if( NULL != packet ){
+            pkt_handler(packet);
+        }
+    } else if ( livemode==0 ) {
+        GP_CAP_FIN = 1;
+        break;
+    } else {
+        nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
+    }
+}
+
+if( cap != NULL)
+    pcap_close(cap);
+
+return 0;
+
+}
+</code></pre><p><em>主要是应用libpcap的pcap抓包框架：</em><br><img src="http://t1.aixinxi.net/o_1ckrocst3snm27a2e3gdiemoa.png-j.jpg" alt=""></p>
+</li>
+</ul>
+<p>pcap_t  pcap_open_live(char <em>device, int snaplen, int promisc, int to_ms, char </em>ebuf)</p>
+<p>函数功能：是获得数据包捕获描述字的函数  </p>
+<ul>
+<li>snaplen参数定义捕获数据的最大字节数， 一般使用BUFSIZ， 该参数一般位于&lt;pcap.h&gt;中，若没有定义，应使用unsigned int的最大值。  </li>
+<li>promisc指定是否将网络接口置于混杂模式， 如果设置为true(当promisc&gt;0时)可以使用混杂模式进行数据包的抓取。  </li>
+<li>to_ms参数指定超时时间（毫秒），如果设置为0意味着没有超时等待这一说法。  </li>
+<li>ebuf参数则仅在pcap_open_live()函数出错返回NULL时用于传递错误消息。</li>
+</ul>
+<p>pcap_t <em>pcap_open_offline(char </em>fname,char *errbuf) </p>
+<p>函数功能：获得保存在fname文件中的以前捕捉的数据。如果出错，错误保存在errbuf中。</p>
+<p>const u_char <em>pcap_next(pcap_t </em>p, struct pcap_pkthdr *h)</p>
+<p>函数功能：返回一个无符号指针指向抓取到的数据，参数h为包的一些基本信息<br>然后调到packet_preprocess()函数</p>
+<p>int pcap_compile(pcap_t <em>p, strUCt bpf_program </em>fp, char *str, int optimize, bpf_u_int32 netmask)</p>
+<p>函数功能：设置并编译过滤器</p>
+<ul>
+<li>*p是存放的会话句柄</li>
+<li>*fp是存放被编译的过滤器的版本的引用</li>
+<li>*str是存放过滤表达式</li>
+<li>optimize定义表达式是否被优化的整形量（0为false，1为true，标准规定）</li>
+<li>netmask是网络掩码</li>
+</ul>
+<p>int pcap_setfilter(pcap_t <em>p, struct bpf_program </em>fp)</p>
+<p>函数功能：使用过滤器</p>
+<ul>
+<li>*p存放会话句柄</li>
+<li>*fp存放被编译的过滤器的版本的引用  </li>
+</ul>
+<ul>
+<li><p>##数据包分析</p>
+<p>main.c中的packet__preprocess()函数。packet_ _preprocess主要是解析数据包头部的信息的函数，用来解析以太网帧首部，ip帧首部，tcp帧首部，http报文首部的信息。：  </p>
+<pre><code>packet_t *packet_preprocess(const char *raw_data, const struct pcap_pkthdr *pkthdr)
+{
+packet_t    *pkt = NULL;    /* new packet */
+const char     *cp = raw_data;
+ethhdr    *eth_hdr = NULL;
+iphdr    *ip_hdr = NULL;
+tcphdr    *tcp_hdr = NULL;
+
+/* Parse libpcap packet header */
+pkt = packet_new();
+pkt-&gt;cap_sec = pkthdr-&gt;ts.tv_sec;
+pkt-&gt;cap_usec = pkthdr-&gt;ts.tv_usec;
+pkt-&gt;raw_len = pkthdr-&gt;caplen;
+
+/* Parse ethernet header and check IP payload */
+eth_hdr = packet_parse_ethhdr(cp);
+if(eth_hdr-&gt;ether_type != 0x0800){
+    free_ethhdr(eth_hdr);
+    packet_free(pkt);
+    return NULL;
+}
+
+/* Parse IP header and check TCP payload */
+cp = cp + sizeof(ethhdr);
+ip_hdr = packet_parse_iphdr(cp);
+pkt-&gt;saddr = ip_hdr-&gt;saddr;
+pkt-&gt;daddr = ip_hdr-&gt;daddr;
+pkt-&gt;ip_hl = (ip_hdr-&gt;ihl) &lt;&lt; 2;    /* bytes */
+pkt-&gt;ip_tol = ip_hdr-&gt;tot_len;
+pkt-&gt;ip_pro = ip_hdr-&gt;protocol;
+if(pkt-&gt;ip_pro != 0x06){
+    free_ethhdr(eth_hdr);
+    free_iphdr(ip_hdr);
+    packet_free(pkt);
+    return NULL;
+}
+
+/* Parse TCP header */
+cp = cp + pkt-&gt;ip_hl;
+tcp_hdr = packet_parse_tcphdr(cp);
+pkt-&gt;sport = tcp_hdr-&gt;th_sport;
+pkt-&gt;dport = tcp_hdr-&gt;th_dport;
+pkt-&gt;tcp_seq = tcp_hdr-&gt;th_seq;
+pkt-&gt;tcp_ack = tcp_hdr-&gt;th_ack;
+pkt-&gt;tcp_flags = tcp_hdr-&gt;th_flags;
+pkt-&gt;tcp_win = tcp_hdr-&gt;th_win;
+pkt-&gt;tcp_hl = tcp_hdr-&gt;th_off &lt;&lt; 2;        /* bytes */
+pkt-&gt;tcp_dl = pkt-&gt;ip_tol - pkt-&gt;ip_hl - pkt-&gt;tcp_hl;
+pkt-&gt;http = 0; /* default */
+
+/* Check the TCP ports to identify if the packet carries HTTP data
+   We only consider normal HTTP traffic without encryption */
+if( !(tcp_hdr-&gt;th_sport == 80 || tcp_hdr-&gt;th_dport == 80 || \
+    tcp_hdr-&gt;th_sport == 8080 || tcp_hdr-&gt;th_dport == 8080 || \
+    tcp_hdr-&gt;th_sport == 8000 || tcp_hdr-&gt;th_dport == 8000)){
+    free_ethhdr(eth_hdr);
+    free_iphdr(ip_hdr);
+    free_tcphdr(tcp_hdr);
+    packet_free(pkt);
+    return NULL;
+}
+
+/* Process packets of flows which carry HTTP traffic */
+if(pkt-&gt;tcp_dl != 0){
+    cp = cp + pkt-&gt;tcp_hl;
+    if( !IsHttpPacket(cp, pkt-&gt;tcp_dl) ){
+        /* If the packet is not HTTP, we erase the payload. */
+        pkt-&gt;tcp_odata = NULL;
+        pkt-&gt;tcp_data = pkt-&gt;tcp_odata;
+    }else{
+        /* Yes, it&apos;s HTTP packet */
+        char *head_end = NULL;
+        int hdl = 0;
+</code></pre><p>  int bodylength=0;</p>
+<pre><code>head_end = IsRequest(cp, pkt-&gt;tcp_dl);
+if( head_end != NULL ){
+    /* First packet of request. */
+    hdl = head_end - cp + 1;
+    pkt-&gt;http = HTTP_REQ;
+</code></pre><p>  bodylength=pkt-&gt;tcp_dl-hdl;</p>
+<pre><code>/* Fake TCP data length with only HTTP header. */
+pkt-&gt;tcp_dl = hdl;
+</code></pre><p>  pkt-&gt;http_dl=bodylength;</p>
+<pre><code>}
+head_end = IsResponse(cp, pkt-&gt;tcp_dl);
+if( head_end != NULL ){
+    /* First packet of response. */
+    hdl = head_end - cp + 1;
+    pkt-&gt;http = HTTP_RSP;
+</code></pre><p>  bodylength=pkt-&gt;tcp_dl-hdl;</p>
+<pre><code>/* Fake TCP data length with only HTTP header. */
+pkt-&gt;tcp_dl = hdl;
+</code></pre><p>  pkt-&gt;http_dl=bodylength;</p>
+<pre><code>}
+/* Allocate memory to store HTTP header. */
+pkt-&gt;tcp_odata = MALLOC(char, pkt-&gt;tcp_dl + 1);
+pkt-&gt;tcp_data = pkt-&gt;tcp_odata;
+memset(pkt-&gt;tcp_odata, 0, pkt-&gt;tcp_dl + 1);
+memcpy(pkt-&gt;tcp_odata, cp, pkt-&gt;tcp_dl);
+</code></pre><p>  /<em>Allocate memory to store HTTP body.</em>/<br>  pkt-&gt;http_odata=MALLOC(char,pkt-&gt;http_dl+1);<br>  pkt-&gt;http_data=pkt-&gt;http_odata;<br>  memset(pkt-&gt;http_odata,0,pkt-&gt;http_dl+1);<br>  memcpy(pkt-&gt;http_odata,cp+pkt-&gt;tcp_dl,pkt-&gt;http_dl);</p>
+<pre><code>    }
+}else{
+    pkt-&gt;tcp_odata = NULL;
+    pkt-&gt;tcp_data = pkt-&gt;tcp_odata;
+</code></pre><p>  pkt-&gt;http_odata= NULL;<br>  pkt-&gt;http_data=pkt-&gt;http_odata;</p>
+<pre><code>}
+free_ethhdr(eth_hdr);
+free_iphdr(ip_hdr);
+free_tcphdr(tcp_hdr);
+return pkt;
+</code></pre><p>  }</p>
+</li>
+</ul>
+<ol>
+<li>解析libpcap包的头部信息<br>pkt-&gt;cap_sec = pkthdr-&gt;ts.tv_sec;     //时间戳信息<br>pkt-&gt;cap_usec = pkthdr-&gt;ts.tv_usec;  //时间戳信息<br>pkt-&gt;raw_len = pkthdr-&gt;caplen;   //数据包长度</li>
+</ol>
+<ol start="2">
+<li>解析以太网ethernet头部信息<br>LINUX用eth_ hdr用来表示以太网帧的头部，packet_ parse_ ethhdr为分析以太网帧的函数<br><img src="http://t1.aixinxi.net/o_1cksc0l5jo4943h11u6175o1bhia.png-j.jpg" alt=""><br>hdr-&gt;ether_ dhost即以太网帧的目的mac地址，hdr-&gt;ether_ shost即以太网帧的源mac地址，hdr-&gt;ether_type即网络层使用的协议类型<br><img src="http://t1.aixinxi.net/o_1cksc37p01aim12mgfdv1j9315p8a.png-j.jpg" alt=""></li>
+</ol>
+<p>通过判断hdr-&gt;ether_type是否为0x0800来判断以太网帧是否携带ip帧字段  </p>
+<ol start="3">
+<li>解析ip帧头部信息<br>cp = cp + sizeof(ethhdr);  将以太网帧转到ip帧<br>packet_ parse_ iphdr()为分析ip帧的函数<br><img src="http://t1.aixinxi.net/o_1ckscm2f06euqsu1manfek1cq6a.png-j.jpg" alt=""><br>hdr-&gt;ihl即为ip帧的报头长度<br>hdr-&gt;version即为ip协议实现的版本号<br>hdr-&gt;tos即为服务类型<br>hdr-&gt;tot_len即整个ip帧数据报的长度<br>hdr-&gt;id即标识，16位，用来唯一地标识主机发送的每一份数据报<br>hdr-&gt;frag _off即段偏移量，13位，指出较长的分组在分段后，某段在原分组的相对位置<br>hdr-&gt;ttl生存期（TTL），8位，用来设置数据报最多可以经过的路由器数<br>hdr-&gt;protocol即ip帧数据字段中的数据采用的是上层的哪种协议，常见的有ICMP（1）、IGMP（2）、TCP（6）、UDP（17）<br>hdr-&gt;check即头部校验和，16位，填充根据IP头部计算得到的校验和码<br>hdr-&gt;saddr即源ip地址<br>hdr-&gt;daddr即目的ip地址  </li>
+</ol>
+<p>通过判断hdr-&gt;protocol是否为0x06来判断是否携带tcp帧字段  </p>
+<ol start="4">
+<li><p>解析tcp帧头部信息<br>cp=cp+pkt-&gt;ip_hl;  将ip帧转到tcp帧，ip_hl指ip帧的头部长，cp是指针<br>packet_ parse_tcphdr(cp)为分析tcp帧的头部信息<br><img src="http://t1.aixinxi.net/o_1cktopssm13s21im0urt13ns1oc4a.png-j.jpg" alt=""><br>hdr-&gt;th _sport即源端口<br>hdr-&gt;th _dport即目的端口<br>hdr-&gt;th _seq即顺序号，用来表示从tcp源端向tcp目的端发送的数据字节流<br>hdr-&gt;th _ack即确认号，用来表示发送确认的一端所期望收到的下一个顺序号<br>hdr-&gt;th _off即报头长度<br>hdr-&gt;th _flags控制位<br>hdr-&gt;th _win窗口大小，2个字节，表示从确认号开始，本报文的源方可以接收的字节数，即源方接收窗口大小<br>hdr-&gt;th _sum校验和，2个字节，对整个的 TCP 报文段（包括 TCP 头部和 TCP 数据），以 16 位字进行计算所得<br>hdr-&gt;th _urp紧急指针         </p>
+<p>通过判断端口是否为80/8080/8000来判断是否携带http字段  </p>
+</li>
+<li><p>解析http报文对信息</p>
+<p>cp=cp+pkt-&gt;tcp_hl;   将tcp帧转到http报文，tcp-&gt;hl指tcp帧的头部长，cp是指针<br>IsHttpPacket(cp,pkt-&gt;tcp _dl)函数功能即判断是否是http包<br><img src="http://t1.aixinxi.net/o_1cku9f9lc14cf1n6sjn1ua715h7a.png-j.jpg" alt=""><br>这里调用两个函数IsRequest()和IsResponse()来分别判断是否携带http请求报文和http响应报文<br>并返回http报头长度<br><img src="http://t1.aixinxi.net/o_1cku9hjci1t61sv51vu7p4u1p8ta.png-j.jpg" alt=""><br><img src="http://t1.aixinxi.net/o_1cku9lht68jhm211rqo1ef2rqba.png-j.jpg" alt=""><br>http _request _method为获取http中的请求方法；常见的method为：GET,HEAD,POST,PUT,DELETE,CONNECT,OPTIONS,TRACE,PATCH,MOVE,COPY,LINK,UNLINK,WRAPPED,Extension-mothed等<br>find _header _end()函数为查找到http头部结束位置，也就是http-body开始的位置，<br>具体是通过判断连续两个\n的位置，因为\r\n\r\n是头部和主体区分的部分<br>http _response _version()函数即判断响应时响应行中的http协议版本，通常是8字节，常见的例如”HTTP/1.0”和”HTTP/1.1”  </p>
+<p>从而得出：<br>pkt _http=HTTP _REQ或HTTP _RSP;   报文类型<br>pkt-&gt;http _dl=pkt-&gt;tcp _dl-hdl;  在这里我们取http报文body长度<br>pkt-&gt;tcp _dl = hdl；  在这里我们取http报头head长度  </p>
+</li>
+</ol>
+<ul>
+<li><p>##保存到流队列##<br>process _packet _queue(void)函数从数据包队列里获取一个数据包添加到flow中：<br><img src="http://t1.aixinxi.net/o_1ckualtqt11iv1e6k1h9i1fq1k0a.png-j.jpg" alt=""><br>//该函数不是特别重要，因此在此不做多余解释</p>
+</li>
+<li><p>##流队列数据处理<br>process _flow _queue(const char* dump _file)函数:<br><img src="http://t1.aixinxi.net/o_1ckuaqlgifvn1ivsdmr1qnnsula.png-j.jpg" alt=""><br>其中最主要的是flow _extract _http(flow)函数(位于flow.c中)：实现对http报文对的解析及处理<br>在flow _extract _http(flow)函数中主要是http _parse _request()和http _parse _response()函数，分别实现对请求报文和响应报文的提取。</p>
+<pre><code>int http_parse_request(request_t *request, const char *data, const char *dataend,const char* body_data, const char* body_data_end){
+
+char *eoh, *eol, *linesp, *lineep;
+int line_cnt = 0, lnl = 0, hdl = 0;
+int bdl=0;
+eoh = find_header_end(data, dataend, &amp;line_cnt);
+hdl = eoh - data + 1;
+bdl=body_data_end-body_data;
+/* Parse first line of http request */
+linesp = data;
+lineep = find_line_end(linesp, eoh, &amp;eol);
+lnl = lineep - linesp + 1;
+request-&gt;method = http_request_method(linesp, lnl);
+if ( request-&gt;method == HTTP_MT_NONE){
+    return -1;
+} 
+
+request-&gt;uri = http_request_uri(linesp, lnl);
+request-&gt;version = http_request_version(linesp, lnl);
+request-&gt;host = http_header_param(data, hdl, &quot;Host:&quot;);
+request-&gt;referer = http_header_param(data, hdl, &quot;Referer:&quot;);
+request-&gt;user_agent = http_header_param(data, hdl, &quot;User-Agent:&quot;);
+request-&gt;connection = http_header_param(data, hdl, &quot;Connection:&quot;);
+request-&gt;accept = http_header_param(data, hdl, &quot;Accept:&quot;);
+request-&gt;accept_encoding = http_header_param(data, hdl, &quot;Accept-Encoding:&quot;);
+request-&gt;accept_language = http_header_param(data, hdl, &quot;Accept-Language:&quot;);
+request-&gt;accept_charset = http_header_param(data, hdl, &quot;Accept-Charset:&quot;);
+request-&gt;cookie = http_header_param(data, hdl, &quot;Cookie:&quot;);
+if (request-&gt;method == HTTP_MT_POST ){
+    request-&gt;content_type = http_header_param(data, hdl, &quot;Content-Type:&quot;);
+    request-&gt;content_encoding = http_header_param(data, hdl, &quot;Content-Encoding:&quot;);
+    request-&gt;content_length = http_header_param(data, hdl, &quot;Content-Length:&quot;);
+if(bdl=0){
+request-&gt;body=NULL;
+ } 
+else{
+request-&gt;body=body_data;
+ }
+ }
+ return 0;
+ }
+
+int http_parse_response(response_t *response, const char *data, const char *dataend,const char*body_data,const char *body_data_end){
+char *eoh, *eol, *linesp, *lineep;
+int line_cnt = 0, i = 0, dim = sizeof(HTTP_STATUS_CODE_ARRAY), lnl = 0, hdl = 0;
+http_status status;
+int bdl=0;
+eoh = find_header_end(data, dataend, &amp;line_cnt);
+hdl = eoh -data + 1;
+response-&gt;hdlen = hdl;
+bdl=body_data_end-body_data;
+/* first line */
+linesp = data;
+lineep = find_line_end(linesp, eoh, &amp;eol);
+lnl = lineep - linesp + 1;
+
+response-&gt;status = http_response_status(linesp, lnl);
+if (response-&gt;status == HTTP_ST_NONE){
+    return -1;
+}
+
+response-&gt;version = http_response_version(linesp, lnl);
+response-&gt;server = http_header_param(data, hdl, &quot;Server:&quot;);
+
+/* Cache */
+response-&gt;date = http_header_param(data, hdl, &quot;Date:&quot;);
+response-&gt;expires = http_header_param(data, hdl, &quot;Expires:&quot;);
+response-&gt;last_modified = http_header_param(data, hdl, &quot;Last-Modified:&quot;);
+response-&gt;etag = http_header_param(data, hdl, &quot;ETag:&quot;);
+response-&gt;age = http_header_param(data, hdl, &quot;Age:&quot;);
+
+/* Content */
+response-&gt;accept_ranges = http_header_param(data, hdl, &quot;Accept-Ranges:&quot;);
+response-&gt;content_type = http_header_param(data, hdl, &quot;Content-Type:&quot;);
+response-&gt;content_encoding = http_header_param(data, hdl, &quot;Content-Encoding:&quot;);
+response-&gt;content_length = http_header_param(data, hdl, &quot;Content-Length:&quot;);
+response-&gt;location = http_header_param(data, hdl, &quot;Location:&quot;);
+</code></pre></li>
+</ul>
+<pre><code>if(bdl=0){
+response-&gt;body=NULL;
+} 
+
+else{
+response-&gt;body=body_data; 
+}  
+return 0;
+}
+</code></pre><ul>
+<li>##输出到json文件<br>process _flow _queue(const char* dump _file)函数:<br>主要是save _flow _json(flow,file _name)（位于io.c中）:   将数据包重要信息及http报文对以json格式输出  </li>
+</ul>
+<pre><code> void save_flow_json(const flow_t *flow, const char* file){
+
+ // Filter flows with out HTTP pairs.
+ if(flow-&gt;http_cnt == 0){
+ return;
+ }
+
+ struct json_object *new_flow;
+ struct json_object *http_pairs, *new_http_pair, *new_request, *new_response;
+
+ new_flow = json_object_new_object();
+
+ /* Timestamp */
+ char time_buf[20];
+ time_t raw_time;
+ struct tm *timeinfo = NULL;
+
+
+
+ memset(time_buf, 0, sizeof(time_buf));
+ time( &amp;raw_time );
+ timeinfo = localtime( &amp;raw_time );
+
+ // ISO 8601 time format
+ strftime(time_buf, sizeof(time_buf), &quot;%Y-%m-%dT%H:%M:%S&quot;, timeinfo);
+ json_object_object_add(new_flow, &quot;t_r&quot;, json_object_new_string(time_buf));
+
+
+ /*Convert IP addr */
+ char *saddr = malloc(sizeof(&quot;aaa.bbb.ccc.ddd&quot;));
+ char *daddr = malloc(sizeof(&quot;aaa.bbb.ccc.ddd&quot;));
+ strncpy(saddr, ip_ntos(flow-&gt;socket.saddr), sizeof(&quot;aaa.bbb.ccc.ddd&quot;));
+ strncpy(daddr, ip_ntos(flow-&gt;socket.daddr), sizeof(&quot;aaa.bbb.ccc.ddd&quot;));
+
+ json_object_object_add(new_flow, &quot;sa&quot;, json_object_new_string(saddr));
+ json_object_object_add(new_flow, &quot;da&quot;, json_object_new_string(daddr));
+ json_object_object_add(new_flow, &quot;sp&quot;, json_object_new_int(flow-&gt;socket.sport));
+ json_object_object_add(new_flow, &quot;dp&quot;, json_object_new_int(flow-&gt;socket.dport));
+ json_object_object_add(new_flow, &quot;synt&quot;, json_object_new_double(flow-&gt;syn_sec + flow-&gt;syn_usec*0.000001));
+ json_object_object_add(new_flow, &quot;fbt&quot;, json_object_new_double(flow-&gt;fb_sec + flow-&gt;fb_usec*0.000001));
+ json_object_object_add(new_flow, &quot;lbt&quot;, json_object_new_double(flow-&gt;lb_sec + flow-         &gt;lb_usec*0.000001));
+
+ json_object_object_add(new_flow, &quot;rtt&quot;, json_object_new_int(flow-&gt;rtt));
+ json_object_object_add(new_flow, &quot;spkts&quot;, json_object_new_int(flow-&gt;pkts_src));
+ json_object_object_add(new_flow, &quot;dpkts&quot;, json_object_new_int(flow-&gt;pkts_dst));
+ json_object_object_add(new_flow, &quot;spl&quot;, json_object_new_int(flow-&gt;payload_src));
+ json_object_object_add(new_flow, &quot;dpl&quot;, json_object_new_int(flow-&gt;payload_dst));
+
+       json_object_object_add(new_flow, &quot;fc&quot;, json_object_new_int((flow-&gt;close == FORCED_CLOSE) ? 1 : 0));
+       json_object_object_add(new_flow, &quot;pcnt&quot;, json_object_new_int(flow-&gt;http_cnt));  
+
+        /* Print flow information. */
+        http_pairs = json_object_new_array();
+        if(flow-&gt;http_f != NULL){
+        http_pair_t *http;
+        http = flow-&gt;http_f;
+
+        while(http != NULL){
+        new_http_pair = json_object_new_object();
+        if(http-&gt;request_header != NULL){
+        request_t *req = http-&gt;request_header;
+        new_request = json_object_new_object();
+        json_object_object_add(new_request, &quot;fbt&quot;, json_object_new_double(http-&gt;req_fb_sec + http-&gt;req_fb_usec*0.000001));
+        json_object_object_add(new_request, &quot;lbt&quot;, json_object_new_double(http-&gt;req_lb_sec + http-&gt;req_lb_usec*0.000001));
+        json_object_object_add(new_request, &quot;totlen&quot;, json_object_new_int(http-&gt;req_total_len));
+        json_object_object_add(new_request, &quot;bdylen&quot;, json_object_new_int(http-&gt;req_body_len));    // ****
+        json_object_object_add(new_request, &quot;ver&quot;, json_object_new_int(req-&gt;version));
+        json_object_object_add(new_request, &quot;mth&quot;, json_object_new_string(HTTP_METHOD_STRING_ARRAY[req-&gt;method]));
+        if(req-&gt;host != NULL)
+            json_object_object_add(new_request, &quot;host&quot;, json_object_new_string(req-&gt;host));
+        if(req-&gt;uri != NULL)
+            json_object_object_add(new_request, &quot;uri&quot;, json_object_new_string(req-&gt;uri));
+        if(req-&gt;referer != NULL)
+            json_object_object_add(new_request, &quot;ref&quot;, json_object_new_string(req-&gt;referer));
+        if(req-&gt;user_agent != NULL)
+            json_object_object_add(new_request, &quot;ua&quot;, json_object_new_string(req-&gt;user_agent));
+        if(req-&gt;accept != NULL)
+            json_object_object_add(new_request, &quot;accept&quot;, json_object_new_string(req-&gt;accept));
+        if(req-&gt;accept_encoding != NULL)
+            json_object_object_add(new_request, &quot;accept_encoding&quot;, json_object_new_string(req-&gt;accept_encoding));
+        if(req-&gt;accept_language != NULL)
+            json_object_object_add(new_request, &quot;accept_language&quot;, json_object_new_string(req-&gt;accept_language));
+        if(req-&gt;accept_charset != NULL)
+            json_object_object_add(new_request, &quot;accept_charset&quot;, json_object_new_string(req-&gt;accept_charset));
+        if(req-&gt;cookie != NULL)
+            json_object_object_add(new_request, &quot;cookie&quot;, json_object_new_string(req-&gt;cookie));
+        if(req-&gt;content_type != NULL)
+            json_object_object_add(new_request, &quot;contyp&quot;, json_object_new_string(req-&gt;content_type));
+        if(req-&gt;content_encoding != NULL)
+            json_object_object_add(new_request, &quot;conenc&quot;, json_object_new_string(req-&gt;content_encoding));
+        if(req-&gt;content_length != NULL)
+            json_object_object_add(new_request, &quot;conlen&quot;, json_object_new_string(req-&gt;content_length));
+        if(req-&gt;body!= NULL)
+            json_object_object_add(new_request, &quot;body&quot;, json_object_new_string(req-&gt;body));
+
+            json_object_object_add(new_http_pair, &quot;req&quot;, new_request);
+    }
+
+    if(http-&gt;response_header != NULL){
+        response_t    *rsp = http-&gt;response_header;
+                        new_response = json_object_new_object();
+        json_object_object_add(new_response, &quot;fbt&quot;, json_object_new_double(http-&gt;rsp_fb_sec + http-&gt;rsp_fb_usec*0.000001));
+        json_object_object_add(new_response, &quot;lbt&quot;, json_object_new_double(http-&gt;rsp_lb_sec + http-&gt;rsp_lb_usec*0.000001));
+        json_object_object_add(new_response, &quot;totlen&quot;, json_object_new_int(http-&gt;rsp_total_len));
+        json_object_object_add(new_response, &quot;bdylen&quot;, json_object_new_int(http-&gt;rsp_body_len));
+        json_object_object_add(new_response, &quot;ver&quot;, json_object_new_int(rsp-&gt;version));
+        json_object_object_add(new_response, &quot;sta&quot;, json_object_new_int(rsp-&gt;status));
+        if(rsp-&gt;server != NULL)
+            json_object_object_add(new_response, &quot;server&quot;, json_object_new_string(rsp-&gt;server));
+        if(rsp-&gt;location != NULL)
+            json_object_object_add(new_response, &quot;loc&quot;, json_object_new_string(rsp-&gt;location));
+        if(rsp-&gt;date != NULL)
+            json_object_object_add(new_response, &quot;dat&quot;, json_object_new_string(rsp-&gt;date));
+        if(rsp-&gt;expires != NULL)
+            json_object_object_add(new_response, &quot;exp&quot;, json_object_new_string(rsp-&gt;expires));
+        if(rsp-&gt;etag != NULL)
+            json_object_object_add(new_response, &quot;etag&quot;, json_object_new_string(rsp-&gt;etag));
+        if(rsp-&gt;accept_ranges != NULL)
+            json_object_object_add(new_response, &quot;accept_ranges&quot;, json_object_new_string(rsp-&gt;accept_ranges));
+        if(rsp-&gt;last_modified != NULL)
+            json_object_object_add(new_response, &quot;lmod&quot;, json_object_new_string(rsp-&gt;last_modified));
+        if(rsp-&gt;content_type != NULL)
+            json_object_object_add(new_response, &quot;contyp&quot;, json_object_new_string(rsp-&gt;content_type));
+        if(rsp-&gt;content_encoding != NULL)
+            json_object_object_add(new_response, &quot;conenc&quot;, json_object_new_string(rsp-&gt;content_encoding));
+        if(rsp-&gt;content_length != NULL)
+            json_object_object_add(new_response, &quot;conlen&quot;, json_object_new_string(rsp-&gt;content_length));
+        if(rsp-&gt;age != NULL)
+            json_object_object_add(new_response, &quot;age&quot;, json_object_new_string(rsp-&gt;age));
+        if(rsp-&gt;body !=NULL)
+            json_object_object_add(new_response, &quot;body&quot;,json_object_new_string(rsp-&gt;body));
+
+            json_object_object_add(new_http_pair, &quot;res&quot;, new_response);
+    }
+
+    json_object_array_add(http_pairs, new_http_pair);
+    http = http-&gt;next;
+}
+}
+
+json_object_object_add(new_flow, &quot;pairs&quot;, http_pairs);
+
+// Dump to file
+FILE *f = fopen(file, &quot;ab&quot;);
+fputs(json_object_to_json_string(new_flow), f);
+fputs(&quot;\n&quot;, f);
+fclose(f);
+
+json_object_put(new_flow);
+free(saddr);
+free(daddr);
+ }
+</code></pre><p>#后续修改： #</p>
+<p>  实现具体目标：对校园网portal认证界面ip实现流量过滤并抓取数据包，解析其中的ip,用户名，认证成功时间，下线时间，并以日志格式输出  </p>
+<ol>
+<li>将过滤条件直接写入源代码：<br>  char  *rules=”host 10.255.44.33”;<br>  pcap_compile(cap,&amp;filter,rules,0,net);  </li>
+<li>在io.c的save _flow _json()函数中添加logout函数并在process_flow_queue()函数中引用：</li>
+</ol>
+<p> 因为需要提取的信息均在http的请求报文主体字段中，因此我们只需要提取请求字段</p>
+<pre><code>void logout(const flow_t *flow){
+char time_buf[20];
+time_t raw_time;
+struct tm *timeinfo = NULL;
+char *action=&quot;action&quot;;
+char *username=&quot;username&quot;;
+char *user_ip=&quot;user_ip&quot;;
+char *user_password=&quot;password&quot;;
+char  *log_time=&quot;log_time&quot;;
+FILE *log=fopen(&quot;./log.txt&quot;,&quot;a+&quot;);
+char *body,*body_action,*body_username,*body_password;
+int a_s,a_e,u_s,u_e;
+
+
+if(flow-&gt;http_cnt == 0){
+return;
+}
+http_pair_t *http;
+http = flow-&gt;http_f;
+request_t *req = http-&gt;request_header;  //用http-&gt;request_header代替整个请求字段
+body=req-&gt;body;
+if(body==0){
+    fclose(log);
+}
+else{
+
+memset(time_buf, 0, sizeof(time_buf));
+time( &amp;raw_time );
+timeinfo = localtime( &amp;raw_time );
+
+strftime(time_buf, sizeof(time_buf), &quot;%Y-%m-%dT%H:%M:%S&quot;, timeinfo);
+fprintf(log,&quot;\n[%s  :  %s]&quot;,log_time,time_buf);       //time
+
+
+char *saddr = malloc(sizeof(&quot;aaa.bbb.ccc.ddd&quot;));
+strncpy(saddr, ip_ntos(flow-&gt;socket.saddr), sizeof(&quot;aaa.bbb.ccc.ddd&quot;));
+fprintf(log,&quot;[%s  :  %s]&quot;, user_ip,saddr);          //user_ip
+
+
+a_s=strpd(body,action);
+if(a_s&gt;=0){
+
+     body=body+sizeof(&quot;action=&quot;)-1+a_s;
+     a_e=strpd(body,&quot;&amp;&quot;);
+     body_action=MALLOC(char,sizeof(char)*50);
+     memset(body_action,0,sizeof(char)*50);
+     strncpy(body_action,body,a_e);
+     fprintf(log,&quot;[%s  :  %s]&quot;,action,body_action);
+     if(strcmp(body_action,&quot;login&quot;)==0){
+              u_s=strpd(body,username);
+              body=body+sizeof(&quot;usernaem=&quot;)-1+u_s;
+              u_e=strpd(body,&quot;&amp;password=&quot;);        //length of username
+              body_username=MALLOC(char,sizeof(char)*50);
+              memset(body_username,0,sizeof(char)*50);
+              strncpy(body_username,body,u_e);
+              body=body+sizeof(&quot;&amp;password=&quot;)-1+u_e;
+              body_password=MALLOC(char,sizeof(char)*100);
+              memset(body_password,0,sizeof(char)*100);
+              strncpy(body_password,body,strlen(body));
+              fprintf(log,&quot;[%s  :  %s]&quot;,username,body_username);
+              fprintf(log,&quot;[%s  :  %s]&quot;,user_password,body_password);
+              free(body_username);
+              free(body_password);
+
+     }
+
+}
+free(body_action);
+
+
+
+fclose(log);
+}
+
+
+ }
+int 
+strpd(char *p,char *q)
+{
+int lenp=strlen(p);
+int lenq=strlen(q);
+int i;
+for (i=0;i&lt;=lenp-lenq;i++)
+{
+ if (strncmp(p+i,q,lenq)==0) return i;
+ }
+return -1;
+ }
+</code></pre><p>strpd(char <em>p,char </em>q)函数用来获取从p开始直到查找到与q相匹配的字段时p到q的长度<br>依次通过strpd函数查找action,username,password字段，然后将其输出</p>
+<p>实现目标：<br><img src="http://t1.aixinxi.net/o_1ckui13cnaci1stb1035gh1uv1a.png-j.jpg" alt=""><br><img src="http://t1.aixinxi.net/o_1ckui6ap710fa129fnbc121fn7oa.png-j.jpg" alt=""></p>
+<p>#地址#</p>
+<p>改进版本：<br>添加 -b “过滤语句”命令<br>具体命令为./bin/http-sniffer -i interface -b “BPF语句” -o  txt<br>同时输出http body内容(不包含日志写入log.txt)<br>可用范围广<br>改进版本2：<br>直接使用,过滤语句修改位置位于capture_main()函数中的rules;<br>具备日志输出，可直接查看用户名及密码<br>使用范围单一，用于portal认证ip流量数据包抓取</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/http抓包分析/" rel="tag"># http抓包分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/24/test/" rel="next" title="test">
+                <i class="fa fa-chevron-left"></i> test
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="bluedark" />
+            
+              <p class="site-author-name" itemprop="name">bluedark</p>
+              <p class="site-description motion-element" itemprop="description">Live beautifully, dream passionately, love completely</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#http-sniffer重要代码分析"><span class="nav-number">1.</span> <span class="nav-text">http-sniffer重要代码分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bluedark</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
