@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。3.抓取portal认证信息">
+<meta name="description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。 抓取portal认证信息">
 <meta name="keywords" content="http抓包分析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="http-sniffer 添加过滤并实现抓取portal认证信息">
 <meta property="og:url" content="http://yoursite.com/2018/08/14/http-sniffer-添加过滤并实现抓取portal认证信息/index.html">
 <meta property="og:site_name" content="bluedark&#39;s blog">
-<meta property="og:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。3.抓取portal认证信息">
+<meta property="og:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。 抓取portal认证信息">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckuf3aigr2qe6718dn1jtjn4da.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckrocst3snm27a2e3gdiemoa.png-j.jpg">
@@ -100,10 +100,10 @@
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckuaqlgifvn1ivsdmr1qnnsula.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckui13cnaci1stb1035gh1uv1a.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckui6ap710fa129fnbc121fn7oa.png-j.jpg">
-<meta property="og:updated_time" content="2018-08-15T14:31:42.363Z">
+<meta property="og:updated_time" content="2018-08-15T15:17:21.989Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="http-sniffer 添加过滤并实现抓取portal认证信息">
-<meta name="twitter:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。3.抓取portal认证信息">
+<meta name="twitter:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。 抓取portal认证信息">
 <meta name="twitter:image" content="http://t1.aixinxi.net/o_1ckuf3aigr2qe6718dn1jtjn4da.png-j.jpg">
 
 
@@ -337,11 +337,11 @@
         <p>主要工作：</p>
 <ol>
 <li>对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。</li>
-<li>增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。<br>3.抓取portal认证信息<a id="more"></a>
+<li>增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。</li>
+<li>抓取portal认证信息<a id="more"></a>
 </li>
 </ol>
-<p>#介绍：#</p>
-<p><strong>http-sniffer：</strong><br>是一种多线程工具，可以用于从pcap文件中嗅探TCP流统计信息和嵌入式HTTP标头。每个携带HTTP的TCP流都以json格式导出到文本中。<br>链接：<a href="https://github.com/caesar0301/http-sniffer" target="_blank" rel="noopener">https://github.com/caesar0301/http-sniffer</a></p>
+<h1 id="介绍："><a href="#介绍：" class="headerlink" title="介绍："></a>介绍：</h1><p><strong>http-sniffer：</strong><br>是一种多线程工具，可以用于从pcap文件中嗅探TCP流统计信息和嵌入式HTTP标头。每个携带HTTP的TCP流都以json格式导出到文本中。<br>链接：<a href="https://github.com/caesar0301/http-sniffer" target="_blank" rel="noopener">https://github.com/caesar0301/http-sniffer</a></p>
 <p>安装依赖软件包：  </p>
 <ul>
 <li>libpcap<br>libpcap软件链接：<a href="http://www.tcpdump.org/" target="_blank" rel="noopener">http://www.tcpdump.org/</a><br>安装教程链接<a href="https://cn.aliyun.com/jiaocheng/137533.html?spm=5176.100033.1.23.M6VMI3" target="_blank" rel="noopener">https://cn.aliyun.com/jiaocheng/137533.html?spm=5176.100033.1.23.M6VMI3</a>   </li>
@@ -836,8 +836,7 @@ json_object_put(new_flow);
 free(saddr);
 free(daddr);
  }
-</code></pre><p>#后续修改： #</p>
-<p>  实现具体目标：对校园网portal认证界面ip实现流量过滤并抓取数据包，解析其中的ip,用户名，认证成功时间，下线时间，并以日志格式输出  </p>
+</code></pre><h1 id="后续修改"><a href="#后续修改" class="headerlink" title="后续修改"></a>后续修改</h1><p>  实现具体目标：对校园网portal认证界面ip实现流量过滤并抓取数据包，解析其中的ip,用户名，认证成功时间，下线时间，并以日志格式输出  </p>
 <ol>
 <li>将过滤条件直接写入源代码：<br>  char  *rules=”host 10.255.44.33”;<br>  pcap_compile(cap,&amp;filter,rules,0,net);  </li>
 <li>在io.c的save _flow _json()函数中添加logout函数并在process_flow_queue()函数中引用：</li>
@@ -933,7 +932,7 @@ return -1;
  }
 </code></pre><p>strpd(char <em>p,char </em>q)函数用来获取从p开始直到查找到与q相匹配的字段时p到q的长度<br>依次通过strpd函数查找action,username,password字段，然后将其输出</p>
 <p>实现目标：<br><img src="http://t1.aixinxi.net/o_1ckui13cnaci1stb1035gh1uv1a.png-j.jpg" alt=""><br><img src="http://t1.aixinxi.net/o_1ckui6ap710fa129fnbc121fn7oa.png-j.jpg" alt=""></p>
-<p>#地址#</p>
+<p>#地址 #</p>
 <p>改进版本：<br>添加 -b “过滤语句”命令<br>具体命令为./bin/http-sniffer -i interface -b “BPF语句” -o  txt<br>同时输出http body内容(不包含日志写入log.txt)<br>可用范围广<br>改进版本2：<br>直接使用,过滤语句修改位置位于capture_main()函数中的rules;<br>具备日志输出，可直接查看用户名及密码<br>使用范围单一，用于portal认证ip流量数据包抓取</p>
 
       
@@ -1100,7 +1099,7 @@ return -1;
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#http-sniffer重要代码分析"><span class="nav-number">1.</span> <span class="nav-text">http-sniffer重要代码分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍："><span class="nav-number">1.</span> <span class="nav-text">介绍：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#http-sniffer重要代码分析"><span class="nav-number">2.</span> <span class="nav-text">http-sniffer重要代码分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续修改"><span class="nav-number">3.</span> <span class="nav-text">后续修改</span></a></li></ol></div>
             
 
           </div>
