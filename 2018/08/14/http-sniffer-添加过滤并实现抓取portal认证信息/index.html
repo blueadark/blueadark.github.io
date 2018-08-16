@@ -100,7 +100,7 @@
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckuaqlgifvn1ivsdmr1qnnsula.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckui13cnaci1stb1035gh1uv1a.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1ckui6ap710fa129fnbc121fn7oa.png-j.jpg">
-<meta property="og:updated_time" content="2018-08-16T08:49:28.731Z">
+<meta property="og:updated_time" content="2018-08-16T13:26:59.635Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="http-sniffer 添加过滤并实现抓取portal认证信息">
 <meta name="twitter:description" content="主要工作：  对http嗅探器进行修改，该嗅探器以往只对http报头进行分析，获取http报头中请求信息的头部和回复信息的头部的内容，经过更改将http的body正文输出。 增加其抓包过滤过滤功能实现对只符合条件的数据包的过滤。 抓取portal认证信息">
@@ -933,7 +933,7 @@ return -1;
 </code></pre><p>strpd(char <em>p,char </em>q)函数用来获取从p开始直到查找到与q相匹配的字段时p到q的长度<br>依次通过strpd函数查找action,username,password字段，然后将其输出</p>
 <p>实现目标：<br><img src="http://t1.aixinxi.net/o_1ckui13cnaci1stb1035gh1uv1a.png-j.jpg" alt=""><br><img src="http://t1.aixinxi.net/o_1ckui6ap710fa129fnbc121fn7oa.png-j.jpg" alt=""></p>
 <p>#地址 #</p>
-<p>改进版本：  <a href="https://github.com/blueadark/http-sniffer" target="_blank" rel="noopener">https://github.com/blueadark/http-sniffer</a><br>添加 -b “过滤语句”命令<br>具体命令为./bin/http-sniffer -i interface -b “BPF语句” -o  txt<br>同时输出http body内容(不包含日志写入log.txt)<br>可用范围广<br>改进版本2：<br>直接使用,过滤语句修改位置位于capture_main()函数中的rules;<br>具备日志输出，可直接查看用户名及密码<br>使用范围单一，用于portal认证ip流量数据包抓取</p>
+<p>改进版本：  <a href="https://github.com/blueadark/http-sniffer" target="_blank" rel="noopener">https://github.com/blueadark/http-sniffer</a><br>添加 -b “过滤语句”命令<br>具体命令为./bin/http-sniffer -i interface -b “BPF语句” -o  txt<br>同时输出http body内容(不包含日志写入log.txt)<br>可用范围广<br>改进版本2：  <a href="https://github.com/blueadark/http-sniffer/tree/update" target="_blank" rel="noopener">https://github.com/blueadark/http-sniffer/tree/update</a><br>直接使用,过滤语句修改位置位于capture_main()函数中的rules;<br>具备日志输出，可直接查看用户名及密码<br>使用范围单一，用于portal认证ip流量数据包抓取</p>
 
       
     </div>
